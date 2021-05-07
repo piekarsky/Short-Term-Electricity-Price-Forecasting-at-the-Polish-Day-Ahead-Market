@@ -1,2 +1,2 @@
 # Time-Series-Electricity-Price-Forecasting-at-the-Polish-Power-Exchange-Day-Ahead-Market
-The purpose of this project is to create an effective model based on recurrent neural networks architecture built on the basis of historical data and compare its forecasts with other models used for prediction at the Polish power energy market. Project in progress
+The aim of the project is to create an effective model based on recurrent neural networks architecture for short-term forecast of electricity prices with the use of knowledge about factors and phenomena that shape it. Project in progress...
