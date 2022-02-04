@@ -36,6 +36,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--seed', type=int, default=7777, help='seed for reproducibility')
     parser.add_argument('--which_data', type=str, default='./data/energydata_complete.csv', help='which data to use')
     parser.add_argument('--weights_path', type=str, default='./results/weights/', help='weights path')
     parser.add_argument('--plots_path', type=str, default='./results/plots/', help='plots path')
