@@ -1,16 +1,10 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[17]:
-
-
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 import os
 from sklearn.model_selection import train_test_split
 import torch
-from torch.utils.data import TensorDataset, DataLoader
+#from torch.utils.data import TensorDataset, DataLoader
 import argparse
 import random
 
@@ -38,16 +32,6 @@ def plot_full(path, data, feature):
     plt.title('{} Energy Prediction'.format(feature))
     plt.savefig(os.path.join(path, '{} Energy Prediction.png'.format(feature)))
     plt.show()
-
-
-# In[15]:
-
-
-
-
-
-# In[ ]:
-
 
 
 
