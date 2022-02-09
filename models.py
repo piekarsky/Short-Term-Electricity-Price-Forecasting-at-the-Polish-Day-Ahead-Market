@@ -48,7 +48,7 @@ class LSTM(nn.Module):
   def forward(self, x):
 
         
-
+        Q, K, V = self.query(x), self.key(x), self.value(x)
         dot_product = torch.matmul(Q, K.permute(0, 2, 1)) / self.scale
         scores = torch.softmax(dot_product, dim=-1)
         scaled_x = torch.matmul(scores, V) + x
