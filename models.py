@@ -45,9 +45,15 @@ class LSTM(nn.Module):
         else:
             self.fc = nn.Linear(hidden_size, output_size)
 
-    def forward(self, x):
-        out, _ = self.lstm(x)
+  def forward(self, x):
+
+        
+
+        dot_product = torch.matmul(Q, K.permute(0, 2, 1)) / self.scale
+        scores = torch.softmax(dot_product, dim=-1)
+        scaled_x = torch.matmul(scores, V) + x
+
+        out = self.attn(scaled_x) + x
+        out, _ = self.lstm(out)
         out = out[:, -1, :]
         out = self.fc(out)
-
-        return out
