@@ -57,3 +57,20 @@ class LSTM(nn.Module):
         out, _ = self.lstm(out)
         out = out[:, -1, :]
         out = self.fc(out)
+
+
+class CNN(nn.Module):
+   
+    def __init__(self, input_size, hidden_dim, output_size):
+        super(CNN, self).__init__()
+
+        self.main = nn.Sequential(
+            nn.Conv1d(in_channels=input_size, out_channels=hidden_dim, kernel_size=1),
+            nn.ReLU(),
+
+           
+        )
+
+    def forward(self, x):
+        out = self.main(x)
+        return out
