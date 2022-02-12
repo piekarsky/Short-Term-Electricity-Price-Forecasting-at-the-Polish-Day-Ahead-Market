@@ -67,7 +67,10 @@ class CNN(nn.Module):
         self.main = nn.Sequential(
             nn.Conv1d(in_channels=input_size, out_channels=hidden_dim, kernel_size=1),
             nn.ReLU(),
+            nn.Flatten(),
 
+            nn.Linear(hidden_dim, 10),
+            nn.Linear(10, output_size)
            
         )
 
