@@ -72,3 +72,20 @@ class SequenceDataset(Dataset):
         return x, self.y[i]
 
 
+def split_sequence_multi_step(sequence, n_steps_in, n_steps_out):
+    """Rolling Window Function for Multi-step"""
+    X, y = list(), list()
+
+    for i in range(len(sequence)):
+        end_ix = i + n_steps_in
+        out_end_ix = end_ix + n_steps_out
+
+        if out_end_ix > len(sequence):
+            break
+
+        seq_x, seq_y = sequence[i:end_ix], sequence[end_ix:out_end_ix]
+
+        X.append(seq_x)
+        y.append(seq_y)
+
+    return np.array(X), np.array(y)[:, :, 0]
