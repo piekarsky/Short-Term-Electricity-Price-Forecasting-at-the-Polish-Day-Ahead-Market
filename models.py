@@ -23,40 +23,32 @@ class DNN(nn.Module):
         return out
 
 
-class LSTM(nn.Module):
-    """Long Short Term Memory"""
-    def __init__(self, input_size, hidden_size, num_layers, output_size, bidirectional=False):
-        super(LSTM, self).__init__()
+class LSTMModel(nn.Module):
+    def __init__(self, num_sensors, hidden_units):
+        super().__init__()
+        self.num_sensors = num_sensors  # this is the number of features
+        self.hidden_units = hidden_units
+        self.num_layers = 1
 
-        self.input_size = input_size
-        self.hidden_size = hidden_size
-        self.num_layers = num_layers
-        self.output_size = output_size
-        self.bidirectional = bidirectional
+        self.lstm = nn.LSTM(
+            input_size=num_sensors,
+            hidden_size=hidden_units,
+            batch_first=True,
+            num_layers=self.num_layers,
+            dropout=0.5
+        )
 
-        self.lstm = nn.LSTM(input_size=input_size,
-                            hidden_size=hidden_size,
-                            num_layers=num_layers,
-                            batch_first=True,
-                            bidirectional=bidirectional)
+        self.linear = nn.Linear(in_features=self.hidden_units, out_features=1)
 
-        if self.bidirectional:
-            self.fc = nn.Linear(hidden_size * 2, output_size)
-        else:
-            self.fc = nn.Linear(hidden_size, output_size)
+    def forward(self, x):
+        batch_size = x.shape[0]
+        h0 = torch.zeros(self.num_layers, batch_size, self.hidden_units).requires_grad_()
+        c0 = torch.zeros(self.num_layers, batch_size, self.hidden_units).requires_grad_()
 
-  def forward(self, x):
+        _, (hn, _) = self.lstm(x, (h0, c0))
+        out = self.linear(hn[0]).flatten()  # First dim of Hn is num_layers, which is set to 1 above.
 
-        
-        Q, K, V = self.query(x), self.key(x), self.value(x)
-        dot_product = torch.matmul(Q, K.permute(0, 2, 1)) / self.scale
-        scores = torch.softmax(dot_product, dim=-1)
-        scaled_x = torch.matmul(scores, V) + x
-
-        out = self.attn(scaled_x) + x
-        out, _ = self.lstm(out)
-        out = out[:, -1, :]
-        out = self.fc(out)
+        return out
 
 
 class CNN(nn.Module):
