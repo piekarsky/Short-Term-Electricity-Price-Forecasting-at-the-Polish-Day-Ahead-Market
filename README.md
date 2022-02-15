@@ -1,2 +1,4 @@
-# Time-Series-Electricity-Price-Forecasting-at-the-Polish-Power-Exchange-Day-Ahead-Market
-The aim of the project is to create an effective model based on recurrent neural networks architecture for short-term forecast of electricity prices with the use of knowledge about factors and phenomena that shape it. Project in progress...
+# Time-Series-Electricity-Price-Forecasting
+
+
+Experimental source code: Short-term electricity price forecasting at the Polish W\Power Exchange Day Ahead Market using pytorch including MLP, RNN,LSTM,GRU models.
