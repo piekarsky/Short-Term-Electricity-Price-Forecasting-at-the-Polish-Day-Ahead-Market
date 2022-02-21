@@ -89,3 +89,41 @@ def split_sequence_multi_step(sequence, n_steps_in, n_steps_out):
         y.append(seq_y)
 
     return np.array(X), np.array(y)[:, :, 0]
+
+
+
+def percentage_error(actual, predicted):
+    """Percentage Error"""
+    res = np.empty(actual.shape)
+    for j in range(actual.shape[0]):
+        if actual[j] != 0:
+            res[j] = (actual[j] - predicted[j]) / actual[j]
+        else:
+            res[j] = predicted[j] / np.mean(actual)
+    return res
+
+
+def mean_percentage_error(y_true, y_pred):
+    """Mean Percentage Error"""
+    mpe = np.mean(percentage_error(np.asarray(y_true), np.asarray(y_pred))) * 100
+    return mpe
+
+
+def mean_absolute_percentage_error(y_true, y_pred):
+    """Mean Absolute Percentage Error"""
+    mape = np.mean(np.abs(percentage_error(np.asarray(y_true), np.asarray(y_pred)))) * 100
+    return mape
+
+
+def plot_pred_test(pred, actual, path, feature, model, step):
+    """Plot Test set Prediction"""
+    plt.figure(figsize=(10, 8))
+
+    plt.plot(pred, label='Pred')
+    plt.plot(actual, label='Actual')
+
+    plt.xlabel('Time', fontsize=18)
+    plt.ylabel('{}'.format(feature), fontsize=18)
+
+    plt.legend(loc='best')
+    plt.grid()
