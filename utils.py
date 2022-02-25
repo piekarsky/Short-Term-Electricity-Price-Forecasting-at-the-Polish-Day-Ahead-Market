@@ -127,3 +127,17 @@ def plot_pred_test(pred, actual, path, feature, model, step):
 
     plt.legend(loc='best')
     plt.grid()
+
+
+def plot_pred_test(pred, actual, path, feature, model, step):
+    """Plot Test set Prediction"""
+    plt.figure(figsize=(10, 8))
+
+    plt.plot(pred, label='Pred')
+    plt.plot(actual, label='Actual')
+
+    plt.xlabel('Time', fontsize=18)
+    plt.ylabel('{}'.format(feature), fontsize=18)
+
+    plt.legend(loc='best')
+    plt.grid()
