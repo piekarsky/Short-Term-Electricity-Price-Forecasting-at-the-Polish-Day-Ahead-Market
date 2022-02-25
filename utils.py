@@ -61,8 +61,7 @@ class SequenceDataset(Dataset):
             x = self.X[i_start:(i + 1), :]
            # x = torch.cat((x[:,:i], x[:, i+1:]), axis = 1)
            # x = torch.cat((x[:,:i], x[:, i+1:]))
-           # x = x[torch.arange(x.size(0))!=self.sequence_length-1] 
-            
+          
             
         else:
             padding = self.X[0].repeat(self.sequence_length - i - 1, 1)
@@ -141,3 +140,6 @@ def plot_pred_test(pred, actual, path, feature, model, step):
 
     plt.legend(loc='best')
     plt.grid()
+    
+    plt.title('{} Energy Prediction using {} and {}'.format(feature, model.__class__.__name__, step), fontsize=18)
+    plt.savefig(os.path.join(path, '{} Energy Prediction using {} and {}.png'.format(feature, model.__class__.__name__, step)))
