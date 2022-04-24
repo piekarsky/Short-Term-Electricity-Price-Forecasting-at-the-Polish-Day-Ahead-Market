@@ -26,39 +26,8 @@ def main(args):
 
     # Prepare Data #
     data = load_data(args.which_data)[args.feature]
-    data = data.copy()
-    
-    #df = pd.DataFrame(data)
-  #  display(data)
     
     
-       
-    df = standardization(data)
-    
-    print("Hello world!")
-    
-    val_start = "2020-02-08 01:00:00"
-    test_start = "2020-07-19 01:00:00"
-
-    df_train = df.loc[:val_start].copy()
-    df_val = df.loc[val_start:test_start].copy()
-    df_test = df.loc[test_start:].copy()
-    
-    
-    torch.manual_seed(101)
-
-    
-    features = list(df.columns.difference(['value']))
-
-    display(df_train)
-    
-    train_dataset = SequenceDataset(
-        df_train,
-        target='value',
-        features=features,
-        sequence_length=args.seq_length
-    )
-   
 
     
 
