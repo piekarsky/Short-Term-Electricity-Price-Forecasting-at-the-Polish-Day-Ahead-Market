@@ -24,12 +24,26 @@ def main(args):
     for path in paths:
         make_dirs(path)
 
-    # Prepare Data #
+    # Prepare Data 
     data = load_data(args.which_data)[args.feature]
+    dfs = data.set_index(['date'])
+    
+    #Split Data
+    val_start = "2020-07-01 01:00:00"
+    test_start = "2020-10-01 01:00:00"
+
+
+    df_train = df.loc[:val_start].copy()
+    df_val = df.loc[val_start:test_start].copy()
+    df_test = df.loc[test_start:].copy()
+    
+    
+    df_train = standardization(df):
+    df_train = standardization(df)
+    df_test = standardization(df)
     
     
 
-    
 
 if __name__ == "__main__":
     
@@ -38,9 +52,6 @@ if __name__ == "__main__":
     parser.add_argument('--which_data', type=str, default='./data/data.xlsx', help='which data to use')
     parser.add_argument('--seed', type=int, default=7777, help='seed for reproducibility')
     parser.add_argument('--feature', type=str, default=['value', 'lag24', 'lag48'], help='extract which feature')
-    parser.add_argument('--weights_path', type=str, default='./results/weights/', help='weights path')
-    parser.add_argument('--plots_path', type=str, default='./results/plots/', help='plots path')
-    parser.add_argument('--numpy_path', type=str, default='./results/numpy/', help='numpy path')
     parser.add_argument('--plot_full', type=bool, default=False, help='plot full graph or not')
     parser.add_argument('--output_size', type=int, default=1, help='output_size')
     
