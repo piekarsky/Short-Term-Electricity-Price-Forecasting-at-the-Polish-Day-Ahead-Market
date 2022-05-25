@@ -20,8 +20,8 @@ def load_data(data):
 
     data = pd.read_excel(data_dir)
 
-    data.index = data['date']
-    data = data.drop('date', axis=1)
+    #data.index = data['date']
+   # data = data.drop('date', axis=1)
 
     return data
 
@@ -44,7 +44,8 @@ def standardization(df):
 
 class SequenceDataset(Dataset):
     
-        
+    display(Dataset)
+    
     def __init__(self, dataframe, target, features, sequence_length=5):
         self.features = features
         self.target = target
@@ -61,7 +62,8 @@ class SequenceDataset(Dataset):
             x = self.X[i_start:(i + 1), :]
            # x = torch.cat((x[:,:i], x[:, i+1:]), axis = 1)
            # x = torch.cat((x[:,:i], x[:, i+1:]))
-          
+           # x = x[torch.arange(x.size(0))!=self.sequence_length-1] 
+            
             
         else:
             padding = self.X[0].repeat(self.sequence_length - i - 1, 1)
@@ -71,22 +73,46 @@ class SequenceDataset(Dataset):
         return x, self.y[i]
 
 
-def split_sequence_multi_step(sequence, n_steps_in, n_steps_out):
-    """Rolling Window Function for Multi-step"""
-    X, y = list(), list()
+def train_model(data_loader, model, loss_function, optimizer):
+    num_batches = len(data_loader)
+    total_loss = 0
+    model.train()
+    
+    
 
-    for i in range(len(sequence)):
-        end_ix = i + n_steps_in
-        out_end_ix = end_ix + n_steps_out
+    for X, y in data_loader:
+        output = model(X)
+        loss = loss_function(output, y)
 
-        if out_end_ix > len(sequence):
-            break
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
 
-        seq_x, seq_y = sequence[i:end_ix], sequence[end_ix:out_end_ix]
+        total_loss += loss.item()
 
-        X.append(seq_x)
-        y.append(seq_y)
+    avg_loss = total_loss / num_batches
+    
+    print(f"Train loss: {avg_loss}")
+  
+    
+    
 
-    return np.array(X), np.array(y)[:, :, 0]
+def test_model(data_loader, model, loss_function):
+
+    
+    num_batches = len(data_loader)
+    total_loss = 0
+
+    model.eval()
+    with torch.no_grad():
+        for X, y in data_loader:
+            output = model(X)
+            total_loss += loss_function(output, y).item()
+
+    avg_loss = total_loss / num_batches
+    
+    print(f"Val loss: {avg_loss}")
+   
+    
 
 
