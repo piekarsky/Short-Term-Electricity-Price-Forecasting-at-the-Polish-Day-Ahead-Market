@@ -1,4 +1,6 @@
-# Time-Series-Electricity-Price-Forecasting
+# Short-Term-Electricity-Price-Forecasting-at-the-Polish-Power-Exchange-Day-Ahead-Market
 
 
-Experimental source code: Short-term electricity price forecasting at the Polish W\Power Exchange Day Ahead Market using pytorch including MLP, RNN,LSTM,GRU models.
+### 1. Overview
+This repository contains the experimental source code for short term electricity price forecasting at the Polish Power Exchange Day Ahead Market  including RNN, LSTM,GRU, MLP and Prophet models.
+
