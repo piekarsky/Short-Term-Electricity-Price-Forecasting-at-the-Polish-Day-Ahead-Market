@@ -36,7 +36,8 @@ class RNNModel(nn.Module):
 
     def forward(self, x):
         
-               
+        batch_size = x.shape[0]
+       
         h0 = torch.zeros(self.num_layers, batch_size, self.hidden_units).requires_grad_()
         
         _, hn = self.rnn(x, h0)
