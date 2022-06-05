@@ -6,6 +6,7 @@ import pandas as pd
 
 from utils import make_dirs, load_data, standardization, SequenceDataset, train_model, test_model, predict
 import torch
+from models import RNNModel
 from sklearn.preprocessing import MinMaxScaler
 from torch.utils.data import DataLoader
 
@@ -83,12 +84,18 @@ def main(args):
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
     
     
+    if args.model == 'rnn':
+        model = RNN(num_inputs=len(features), args.hidden_size, args.output_size)
+    elif args.model == 'lstm':
+        model = LSTM(num_inputs=len(features), args.hidden_size, args.num_layers, args.output_size, args.bidirectional)
+    elif args.model == 'gru':
+        model = GRU(num_inputs=len(features), args.hidden_size, args.num_layers, args.output_size).to(device)
+    else:
+        raise NotImplementedError
+    
+       
     
     
-    
-    model = RNNModel(num_inputs=len(features), hidden_units=args.num_hidden_units)
-    
-
     loss_function = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     
@@ -126,9 +133,8 @@ def main(args):
 
     result_metrics = calculate_metrics(df_out)
     
-    return result_metrics
-    
-    
+  
+   
     
     
 
@@ -175,8 +181,10 @@ if __name__ == "__main__":
     
     parser.add_argument('--lr', type=int, default=0.0001, help='learning rate')
     parser.add_argument('--num_hidden_units', type=int, default=256, help='hidden units')
-    parser.add_argument('--num_epochs', type=int, default=10, help='num_epochs')
-    
+    parser.add_argument('--num_epochs', type=int, default=10, help='num epochs')
+    parser.add_argument('--num_layer_dim', type=int, default=10, help='num layers')
+    parser.add_argument('--dropout', type=int, default=10, help='dropout rate')
+    parser.add_argument('--model', type=str, default='lstm', choices=['rnn', 'lstm', 'gru'])
     config = parser.parse_args()
 
     torch.cuda.empty_cache()
