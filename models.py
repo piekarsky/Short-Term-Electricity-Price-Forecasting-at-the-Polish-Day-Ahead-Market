@@ -7,7 +7,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)s
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
@@ -16,15 +16,15 @@ X, y = next(iter(train_loader))
 print("Features shape:", X.shape)
 print("Target shape:", y.shape)
 
-class RNNModel(nn.Module):
-    def __init__(self, num_sensors, hidden_units):
+class RNN(nn.Module):
+    def __init__(self, num_features, hidden_units):
         super().__init__()
-        self.num_sensors = num_sensors  # this is the number of features
+        self.num_features = num_features  # this is the number of features
         self.hidden_units = hidden_units
         self.num_layers = 1
 
         self.rnn = nn.RNN(
-            input_size=num_sensors,
+            input_size=num_features,
             hidden_size=hidden_units,
             batch_first=True,
             num_layers=self.num_layers,
@@ -48,15 +48,15 @@ class RNNModel(nn.Module):
         return out
 
 
-class LSTMModel(nn.Module):
-    def __init__(self, num_sensors, hidden_units):
+class LSTM(nn.Module):
+    def __init__(self, num_features, hidden_units):
         super().__init__()
-        self.num_sensors = num_sensors  # this is the number of features
+        self.num_features = num_features  # this is the number of features
         self.hidden_units = hidden_units
         self.num_layers = 1
 
         self.lstm = nn.LSTM(
-            input_size=num_sensors,
+            input_size=num_features,
             hidden_size=hidden_units,
             batch_first=True,
             num_layers=self.num_layers,
@@ -76,7 +76,7 @@ class LSTMModel(nn.Module):
         return out
     
     
-class GRUModel(nn.Module):
+class GRU(nn.Module):
     def __init__(self, input_dim, hidden_dim, layer_dim, output_dim, dropout_prob):
         super(GRUModel, self).__init__()
 
