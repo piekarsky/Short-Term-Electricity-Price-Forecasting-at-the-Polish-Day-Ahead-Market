@@ -3,9 +3,6 @@ import torch.nn as nn
 
 import math
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-
 
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)s
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
@@ -17,22 +14,24 @@ print("Features shape:", X.shape)
 print("Target shape:", y.shape)
 
 class RNN(nn.Module):
-    def __init__(self, num_features, hidden_units):
+    def __init__(self, num_features, hidden_units, num_layers, output_size, dropout_rate):
         super().__init__()
         self.num_features = num_features  # this is the number of features
         self.hidden_units = hidden_units
-        self.num_layers = 1
+        self.num_layers = num_layers
+        self.output_size = output_size
+        self.dropout = dropout_rate
 
         self.rnn = nn.RNN(
             input_size=num_features,
             hidden_size=hidden_units,
             batch_first=True,
-            num_layers=self.num_layers,
-            dropout=0.6
+            num_layers=num_layers,
+            dropout=dropout_rate
             
         )
 
-        self.linear = nn.Linear(in_features=self.hidden_units, out_features=1)
+        self.linear = nn.Linear(in_features=self.hidden_units, out_features=self.output_size)
 
     def forward(self, x):
         
