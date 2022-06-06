@@ -27,8 +27,7 @@ def main(args):
     
     df = data.set_index(['date'])
     
-    #display(df)
-    
+       
     #Split Data
     val_start = "2020-07-01 01:00:00"
     test_start = "2020-10-01 01:00:00"
@@ -85,21 +84,17 @@ def main(args):
     
     
     if args.model == 'rnn':
-        model = RNN(num_inputs=len(features), args.hidden_size, args.output_size)
+        model = RNN(num_inputs=len(features), args.hidden_size, args.num_layers, args.output_size, args.dropout)
     elif args.model == 'lstm':
-        model = LSTM(num_inputs=len(features), args.hidden_size, args.num_layers, args.output_size, args.bidirectional)
+        model = LSTM(num_inputs=len(features), args.hidden_size, args.num_layers, args.output_size, args.dropout)
     elif args.model == 'gru':
-        model = GRU(num_inputs=len(features), args.hidden_size, args.num_layers, args.output_size).to(device)
+        model = GRU(num_inputs=len(features), args.hidden_size, args.num_layers, args.output_size, args.dropout)
     else:
         raise NotImplementedError
     
-       
-    
-    
+         
     loss_function = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-    
-    
     
     
     train_plot_losss = []
@@ -182,9 +177,9 @@ if __name__ == "__main__":
     parser.add_argument('--lr', type=int, default=0.0001, help='learning rate')
     parser.add_argument('--num_hidden_units', type=int, default=256, help='hidden units')
     parser.add_argument('--num_epochs', type=int, default=10, help='num epochs')
-    parser.add_argument('--num_layer_dim', type=int, default=10, help='num layers')
+    parser.add_argument('--num_layers', type=int, default=10, help='num layer dim')
     parser.add_argument('--dropout', type=int, default=10, help='dropout rate')
-    parser.add_argument('--model', type=str, default='lstm', choices=['rnn', 'lstm', 'gru'])
+    parser.add_argument('--model', type=str, default='rnn', choices=['rnn', 'lstm', 'gru'])
     config = parser.parse_args()
 
     torch.cuda.empty_cache()
