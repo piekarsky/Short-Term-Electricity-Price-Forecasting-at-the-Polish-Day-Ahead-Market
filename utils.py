@@ -42,6 +42,9 @@ def standardization(df):
     return df
 
 
+
+
+
 class SequenceDataset(Dataset):
     
     display(Dataset)
@@ -72,6 +75,18 @@ class SequenceDataset(Dataset):
 
         return x, self.y[i]
 
+    
+def get_model(model, model_params):
+    models = {
+        "rnn": RNNModel,
+        "lstm": LSTMModel,
+        "gru": GRUModel}
+    return models.get(model.lower())(**model_params)  
+
+
+
+
+  
 
 def train_model(data_loader, model, loss_function, optimizer):
     num_batches = len(data_loader)
@@ -113,6 +128,19 @@ def test_model(data_loader, model, loss_function):
     
     print(f"Val loss: {avg_loss}")
    
+
+
+
+def predict(data_loader, model):
+
+    output = torch.tensor([])
+    model.eval()
+    with torch.no_grad():
+        for X, _ in data_loader:
+            y_star = model(X)
+            output = torch.cat((output, y_star), 0)
+
+    return output
     
 
 
