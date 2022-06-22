@@ -6,10 +6,10 @@ import pandas as pd
 
 from utils import make_dirs, load_data, standardization, SequenceDataset, train_model, test_model, predict
 import torch
-from models import RNNModel
+from models import RNN, LSTM, GRU
 from sklearn.preprocessing import MinMaxScaler
 from torch.utils.data import DataLoader
-
+import torch.nn as nn
 
 
 def main(args):
@@ -27,6 +27,8 @@ def main(args):
     
     df = data.set_index(['date'])
     
+    
+    
        
     #Split Data
     val_start = "2020-07-01 01:00:00"
@@ -36,6 +38,7 @@ def main(args):
     df_val = df.loc[val_start:test_start].copy()
     df_test = df.loc[test_start:].copy()
     
+   
     
     
     # Standardize Data 
@@ -48,7 +51,10 @@ def main(args):
     features = list(df.columns.difference([target]))
       
     
-
+    target_mean = df[target].mean()
+    target_stdev = df[target].std()
+    
+    
 
     train_dataset = SequenceDataset(
         df_train,
@@ -82,19 +88,22 @@ def main(args):
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
     
+    print(len(features))
+    
+    num_inputs=len(features)
     
     if args.model == 'rnn':
-        model = RNN(num_inputs=len(features), args.hidden_size, args.num_layers, args.output_size, args.dropout)
-    elif args.model == 'lstm':
-        model = LSTM(num_inputs=len(features), args.hidden_size, args.num_layers, args.output_size, args.dropout)
-    elif args.model == 'gru':
-        model = GRU(num_inputs=len(features), args.hidden_size, args.num_layers, args.output_size, args.dropout)
+        model = RNN(num_inputs, args.num_hidden_size, args.num_layers, args.output_size, args.dropout)
+  #  elif args.model == 'lstm':
+    #    model = LSTM(num_inputs=len(features), args.hidden_size, args.num_layers, args.output_size, args.dropout)
+   # elif args.model == 'gru':
+     #   model = GRU(num_inputs=len(features), args.hidden_size, args.num_layers, args.output_size, args.dropout)
     else:
         raise NotImplementedError
     
          
     loss_function = nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     
     
     train_plot_losss = []
@@ -127,6 +136,7 @@ def main(args):
 
 
     result_metrics = calculate_metrics(df_out)
+    
     
   
    
@@ -175,10 +185,10 @@ if __name__ == "__main__":
                                   'generation of energy from wind sources lag336'], help='extract which feature')
     
     parser.add_argument('--lr', type=int, default=0.0001, help='learning rate')
-    parser.add_argument('--num_hidden_units', type=int, default=256, help='hidden units')
-    parser.add_argument('--num_epochs', type=int, default=10, help='num epochs')
-    parser.add_argument('--num_layers', type=int, default=10, help='num layer dim')
-    parser.add_argument('--dropout', type=int, default=10, help='dropout rate')
+    parser.add_argument('--num_hidden_size', type=int, default=256, help='hidden units')
+    parser.add_argument('--num_epochs', type=int, default=2, help='num epochs')
+    parser.add_argument('--num_layers', type=int, default=2, help='num layer dim')
+    parser.add_argument('--dropout', type=int, default=0.6, help='dropout rate')
     parser.add_argument('--model', type=str, default='rnn', choices=['rnn', 'lstm', 'gru'])
     config = parser.parse_args()
 
