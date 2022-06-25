@@ -82,7 +82,6 @@ class GRU(nn.Module):
          # Defining the number of layers and the nodes in each layer
         self.hidden_units = hidden_units       
         self.num_layers = num_layers
-        
         self.output_size = output_size
         self.dropout = dropout_rate
 
@@ -96,7 +95,7 @@ class GRU(nn.Module):
         )
 
         # Fully connected layer
-        self.linear = nn.Linear(hidden_dim, output_dim)
+        self.linear = nn.Linear(in_features=self.hidden_units, out_features=self.output_size)
 
     def forward(self, x):
         
