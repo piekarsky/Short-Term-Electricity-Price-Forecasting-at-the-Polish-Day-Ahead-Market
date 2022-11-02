@@ -4,7 +4,7 @@ import argparse
 import numpy as np
 import pandas as pd
 
-from utils import make_dirs, load_data, standardization, SequenceDataset, train_model, test_model, predict
+from utils import make_dirs, load_data, standardization, SequenceDataset, train_model, test_model, predict, calculate_metrics
 import torch
 from models import RNN, LSTM, GRU
 from sklearn.preprocessing import MinMaxScaler
@@ -22,14 +22,9 @@ def main(args):
 
     # Prepare Data 
     data = load_data(args.which_data)[args.feature]
-    
-    
-    
+  
     df = data.set_index(['date'])
-    
-    
-    
-       
+        
     #Split Data
     val_start = "2020-07-01 01:00:00"
     test_start = "2020-10-01 01:00:00"
@@ -37,25 +32,18 @@ def main(args):
     df_train = df.loc[:val_start].copy()
     df_val = df.loc[val_start:test_start].copy()
     df_test = df.loc[test_start:].copy()
-    
-   
-    
-    
+
     # Standardize Data 
     df_train = standardization(df_train)
     df_val = standardization(df_val)
     df_test = standardization(df_test)
     
-    
-    target = "value"
-    features = list(df.columns.difference([target]))
-      
-    
+
+    features = list(df.columns.difference([args.target]))
+  
     target_mean = df[target].mean()
     target_stdev = df[target].std()
-    
-    
-
+      
     train_dataset = SequenceDataset(
         df_train,
         target=target,
@@ -80,15 +68,11 @@ def main(args):
         features=features,
         sequence_length=args.seq_length
     )
-    
-
-    
+     
 
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
-    
-    print(len(features))
     
     num_inputs=len(features)
     
@@ -104,7 +88,6 @@ def main(args):
          
     loss_function = nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-    
     
     train_plot_losss = []
     val_plot_losss = []
@@ -137,19 +120,13 @@ def main(args):
 
     result_metrics = calculate_metrics(df_out)
     
-    
-  
-   
-    
-    
-
 
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-
     parser.add_argument('--which_data', type=str, default='./data/data.xlsx', help='which data to use')
     parser.add_argument('--seed', type=int, default=7777, help='seed for reproducibility')
+    parser.add_argument('--target', type=str, default='value', help='explained variable')
     parser.add_argument('--output_size', type=int, default=1, help='output_size')   
     parser.add_argument('--seq_length', type=int, default=5, help='window size')
     parser.add_argument('--batch_size', type=int, default=64, help='mini-batch size')
@@ -182,7 +159,7 @@ if __name__ == "__main__":
                                   'generation of energy from wind sources lag120',
                                   'generation of energy from wind sources lag144',
                                   'generation of energy from wind sources lag168',
-                                  'generation of energy from wind sources lag336'], help='extract which feature')
+                                  'generation of energy from wind sources lag336'], help='explanatory variables')
     
     parser.add_argument('--lr', type=int, default=0.0001, help='learning rate')
     parser.add_argument('--num_hidden_size', type=int, default=256, help='hidden units')
