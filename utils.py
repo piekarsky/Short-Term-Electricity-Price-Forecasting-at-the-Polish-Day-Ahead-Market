@@ -1,11 +1,7 @@
 import os
 import pandas as pd
-
-
 import torch
 from torch.utils.data import TensorDataset, DataLoader, Dataset
-
-
 
 
 def make_dirs(path):
@@ -17,17 +13,12 @@ def make_dirs(path):
 def load_data(data):
     """Data Loader"""
     data_dir = os.path.join(data)
-
     data = pd.read_excel(data_dir)
-
-    #data.index = data['date']
-   # data = data.drop('date', axis=1)
-
-    return data
+    df = data.set_index(['date'])
+    return df
 
     
-def standardization(df):
-    
+def standardization(df):    
     target = 'value'
     target_mean = df[target].mean()
     target_stdev = df[target].std()
@@ -35,14 +26,8 @@ def standardization(df):
     for c in df.columns:
         mean = df[c].mean()
         stdev = df[c].std()
-
-        df[c] = (df[c] - mean) / stdev
-        
-    
+        df[c] = (df[c]-mean)/stdev   
     return df
-
-
-
 
 
 class SequenceDataset(Dataset):
@@ -112,7 +97,7 @@ def train_model(data_loader, model, loss_function, optimizer):
     
     
 
-def test_model(data_loader, model, loss_function):
+def val_model(data_loader, model, loss_function):
 
     
     num_batches = len(data_loader)
