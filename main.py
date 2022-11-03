@@ -3,13 +3,14 @@ import random
 import argparse
 import numpy as np
 import pandas as pd
-
-from utils import make_dirs, load_data, standardization, SequenceDataset, train_model, test_model, predict, calculate_metrics
 import torch
+import torch.nn as nn
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, mean_absolute_percentage_error
+from utils import make_dirs, load_data, standardization, SequenceDataset, train_model, val_model, predict
 from models import RNN, LSTM, GRU
 from sklearn.preprocessing import MinMaxScaler
 from torch.utils.data import DataLoader
-import torch.nn as nn
+
 
 
 def main(args):
@@ -22,7 +23,6 @@ def main(args):
 
     # Prepare Data 
     data = load_data(args.which_data)[args.feature]
-  
     df = data.set_index(['date'])
         
     #Split Data
@@ -40,14 +40,12 @@ def main(args):
     
 
     features = list(df.columns.difference([args.target]))
-  
-    target_mean = df[target].mean()
-    target_stdev = df[target].std()
+    target_mean = df[args.target].mean()
+    target_stdev = df[args.target].std()
       
     train_dataset = SequenceDataset(
         df_train,
-        target=target,
-    
+        target=args.target,    
         features=features,
         sequence_length=args.seq_length
     )
@@ -55,16 +53,14 @@ def main(args):
 
     val_dataset = SequenceDataset(
         df_val,
-        target=target,
-    
+        target=args.target,  
         features=features,
         sequence_length=args.seq_length
     )
 
     test_dataset = SequenceDataset(
         df_test,
-        target=target,
-    
+        target=args.target,   
         features=features,
         sequence_length=args.seq_length
     )
@@ -92,33 +88,30 @@ def main(args):
     train_plot_losss = []
     val_plot_losss = []
 
-    for ix_epoch in range(args.num_epochs):
+    for ix_epoch in range(1, args.num_epochs+1):
         print(f"Epoch {ix_epoch}\n---------")
         train_model(train_loader, model, loss_function, optimizer=optimizer)
-       # train_plot_losss.append(train_model(train_loader, model, loss_function, optimizer=optimizer))
-        test_model(val_loader, model, loss_function)
-  
+        val_model(val_loader, model, loss_function)
         print()
     
-
-
     train_eval_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=False)
 
-    ystar_col = "Model forecast"
+    ystar_col = "model forecast"
     df_train[ystar_col] = predict(train_eval_loader, model).numpy()
     df_val[ystar_col] = predict(val_loader, model).numpy()
     df_test[ystar_col] = predict(test_loader, model).numpy()
-
-    df_out = pd.concat((df_train, df_val, df_test))[[target, ystar_col]]
+    df_out = pd.concat((df_train, df_val, df_test))[[args.target, ystar_col]]
 
     for c in df_out.columns:
-        df_out[c] = df_out[c] * target_stdev + target_mean
+         df_out[c] = df_out[c] * target_stdev + target_mean
 
     df_out = df_out.reset_index()
+    
     df_out = df_out[df_out['date']>='2020-10-01 01:00:00']
-
-
-    result_metrics = calculate_metrics(df_out)
+    
+    display(df_out)
+    
+    
     
 
 if __name__ == "__main__":
@@ -127,8 +120,8 @@ if __name__ == "__main__":
     parser.add_argument('--which_data', type=str, default='./data/data.xlsx', help='which data to use')
     parser.add_argument('--seed', type=int, default=7777, help='seed for reproducibility')
     parser.add_argument('--target', type=str, default='value', help='explained variable')
-    parser.add_argument('--output_size', type=int, default=1, help='output_size')   
-    parser.add_argument('--seq_length', type=int, default=5, help='window size')
+    parser.add_argument('--output_size', type=int, default=1, help='output_dim')   
+    parser.add_argument('--seq_length', type=int, default=5, help='window size for rnn')
     parser.add_argument('--batch_size', type=int, default=64, help='mini-batch size')
     parser.add_argument('--feature', type=str, 
                          default=['value', 'date', 
@@ -159,7 +152,7 @@ if __name__ == "__main__":
                                   'generation of energy from wind sources lag120',
                                   'generation of energy from wind sources lag144',
                                   'generation of energy from wind sources lag168',
-                                  'generation of energy from wind sources lag336'], help='explanatory variables')
+                                  'generation of energy from wind sources lag336'], help='features')
     
     parser.add_argument('--lr', type=int, default=0.0001, help='learning rate')
     parser.add_argument('--num_hidden_size', type=int, default=256, help='hidden units')
