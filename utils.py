@@ -4,6 +4,7 @@ import torch
 from torch.utils.data import TensorDataset, DataLoader, Dataset
 
 
+
 def make_dirs(path):
     """Make Directory If not Exists"""
     if not os.path.exists(path):
@@ -14,12 +15,11 @@ def load_data(data):
     """Data Loader"""
     data_dir = os.path.join(data)
     data = pd.read_excel(data_dir)
-    df = data.set_index(['date'])
-    return df
+    
+    return data
 
     
-def standardization(df):    
-    target = 'value'
+def standardization(df, target):    
     target_mean = df[target].mean()
     target_stdev = df[target].std()
 
@@ -28,6 +28,16 @@ def standardization(df):
         stdev = df[c].std()
         df[c] = (df[c]-mean)/stdev   
     return df
+
+
+
+def train_val_test_split(df, target_col, test_ratio):
+    val_ratio = test_ratio / (1 - test_ratio)
+    X, y = feature_label_split(df, target_col)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_ratio, shuffle=False)
+    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=val_ratio, shuffle=False)
+    return X_train, X_val, X_test, y_train, y_val, y_test
+
 
 
 class SequenceDataset(Dataset):
@@ -70,16 +80,11 @@ def get_model(model, model_params):
 
 
 
-
-  
-
 def train_model(data_loader, model, loss_function, optimizer):
     num_batches = len(data_loader)
     total_loss = 0
     model.train()
     
-    
-
     for X, y in data_loader:
         output = model(X)
         loss = loss_function(output, y)
@@ -91,15 +96,10 @@ def train_model(data_loader, model, loss_function, optimizer):
         total_loss += loss.item()
 
     avg_loss = total_loss / num_batches
-    
     print(f"Train loss: {avg_loss}")
   
-    
-    
-
-def val_model(data_loader, model, loss_function):
-
-    
+   
+def val_model(data_loader, model, loss_function):    
     num_batches = len(data_loader)
     total_loss = 0
 
@@ -114,8 +114,6 @@ def val_model(data_loader, model, loss_function):
     print(f"Val loss: {avg_loss}")
    
 
-
-
 def predict(data_loader, model):
 
     output = torch.tensor([])
@@ -127,5 +125,6 @@ def predict(data_loader, model):
 
     return output
     
+
 
 
