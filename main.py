@@ -6,7 +6,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, mean_absolute_percentage_error
-from utils import make_dirs, load_data, standardization, SequenceDataset, train_model, val_model, predict
+from utils import make_dirs, load_data, standardization, train_validate_test_split, SequenceDataset, train_model, val_model, predict
 from models import RNN, LSTM, GRU
 from sklearn.preprocessing import MinMaxScaler
 from torch.utils.data import DataLoader
@@ -22,27 +22,25 @@ def main(args):
     torch.cuda.manual_seed(args.seed)
 
     # Prepare Data 
-    data = load_data(args.which_data)[args.feature]
-    df = data.set_index(['date'])
-        
-    #Split Data
-    val_start = "2020-07-01 01:00:00"
-    test_start = "2020-10-01 01:00:00"
-
-    df_train = df.loc[:val_start].copy()
-    df_val = df.loc[val_start:test_start].copy()
-    df_test = df.loc[test_start:].copy()
-
-    # Standardize Data 
-    df_train = standardization(df_train)
-    df_val = standardization(df_val)
-    df_test = standardization(df_test)
-    
-
+    df = load_data(args.which_data)[args.feature]
+    df = df.set_index(['date'])  
     features = list(df.columns.difference([args.target]))
     target_mean = df[args.target].mean()
     target_stdev = df[args.target].std()
-      
+    
+    # Standardize Data 
+    df_ = standardization(df, args.target)
+    df = df_.reset_index(drop=False)
+    
+    
+    #Split Data
+    df_train, df_val, df_test = train_validate_test_split(df, args.test_split) 
+    df_train = df_train.set_index(['date'])
+    df_val = df_val.set_index(['date'])
+    df_test = df_test.set_index(['date'])
+    
+    display(df_train)
+    
     train_dataset = SequenceDataset(
         df_train,
         target=args.target,    
@@ -104,12 +102,12 @@ def main(args):
 
     for c in df_out.columns:
          df_out[c] = df_out[c] * target_stdev + target_mean
-
-    df_out = df_out.reset_index()
-    
-    df_out = df_out[df_out['date']>='2020-10-01 01:00:00']
     
     display(df_out)
+
+#     df_out = df_out.reset_index()
+    
+
     
     
     
@@ -121,7 +119,7 @@ if __name__ == "__main__":
     parser.add_argument('--seed', type=int, default=7777, help='seed for reproducibility')
     parser.add_argument('--target', type=str, default='value', help='explained variable')
     parser.add_argument('--output_size', type=int, default=1, help='output_dim')   
-    parser.add_argument('--seq_length', type=int, default=5, help='window size for rnn')
+    parser.add_argument('--seq_length', type=int, default=5, help='window size')
     parser.add_argument('--batch_size', type=int, default=64, help='mini-batch size')
     parser.add_argument('--feature', type=str, 
                          default=['value', 'date', 
@@ -153,10 +151,10 @@ if __name__ == "__main__":
                                   'generation of energy from wind sources lag144',
                                   'generation of energy from wind sources lag168',
                                   'generation of energy from wind sources lag336'], help='features')
-    
+    parser.add_argument('--test_split', type=float, default=0.2, help='test_split')
     parser.add_argument('--lr', type=int, default=0.0001, help='learning rate')
     parser.add_argument('--num_hidden_size', type=int, default=256, help='hidden units')
-    parser.add_argument('--num_epochs', type=int, default=2, help='num epochs')
+    parser.add_argument('--num_epochs', type=int, default=3, help='num epochs')
     parser.add_argument('--num_layers', type=int, default=2, help='num layer dim')
     parser.add_argument('--dropout', type=int, default=0.6, help='dropout rate')
     parser.add_argument('--model', type=str, default='rnn', choices=['rnn', 'lstm', 'gru'])
