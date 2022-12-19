@@ -15,14 +15,12 @@ def load_data(data):
     """Data Loader"""
     data_dir = os.path.join(data)
     data = pd.read_excel(data_dir)
-    
     return data
 
     
 def standardization(df, target):    
     target_mean = df[target].mean()
     target_stdev = df[target].std()
-
     for c in df.columns:
         mean = df[c].mean()
         stdev = df[c].std()
@@ -31,12 +29,16 @@ def standardization(df, target):
 
 
 
-def train_val_test_split(df, target_col, test_ratio):
-    val_ratio = test_ratio / (1 - test_ratio)
-    X, y = feature_label_split(df, target_col)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_ratio, shuffle=False)
-    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=val_ratio, shuffle=False)
-    return X_train, X_val, X_test, y_train, y_val, y_test
+def train_validate_test_split(df, validate_percent=.2):    
+    train_percent = 1 - validate_percent
+    #perm = np.random.permutation(df.index)
+    m = len(df.index)
+    train_end = int(train_percent * m)
+    validate_end = int(validate_percent * m) + train_end
+    train = df.iloc[:train_end]
+    validate = df.iloc[train_end:validate_end]
+    test = df.iloc[validate_end:]
+    return train, validate, test
 
 
 
@@ -71,15 +73,6 @@ class SequenceDataset(Dataset):
         return x, self.y[i]
 
     
-def get_model(model, model_params):
-    models = {
-        "rnn": RNNModel,
-        "lstm": LSTMModel,
-        "gru": GRUModel}
-    return models.get(model.lower())(**model_params)  
-
-
-
 def train_model(data_loader, model, loss_function, optimizer):
     num_batches = len(data_loader)
     total_loss = 0
