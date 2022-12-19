@@ -117,6 +117,12 @@ def predict(data_loader, model):
             output = torch.cat((output, y_star), 0)
 
     return output
+
+
+def inverse_transform(df, target_stdev,  target_mean):
+    for col in df.columns:
+         df[col] = df[col] * target_stdev + target_mean
+    return df
     
 
 
