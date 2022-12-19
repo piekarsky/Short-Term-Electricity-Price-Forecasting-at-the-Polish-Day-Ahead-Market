@@ -6,7 +6,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, mean_absolute_percentage_error
-from utils import make_dirs, load_data, standardization, train_validate_test_split, SequenceDataset, train_model, val_model, predict
+from utils import make_dirs, load_data, standardization, train_validate_test_split, SequenceDataset, train_model, val_model, predict, inverse_transform
 from models import RNN, LSTM, GRU
 from sklearn.preprocessing import MinMaxScaler
 from torch.utils.data import DataLoader
@@ -99,9 +99,19 @@ def main(args):
     df_val[ystar_col] = predict(val_loader, model).numpy()
     df_test[ystar_col] = predict(test_loader, model).numpy()
     df_out = pd.concat((df_train, df_val, df_test))[[args.target, ystar_col]]
+    
+    
+#    def inverse_transform(scaler, df, columns):
+#    for col in columns:
+#        df[col] = scaler.inverse_transform(df[col])
+#    return df
 
-    for c in df_out.columns:
-         df_out[c] = df_out[c] * target_stdev + target_mean
+
+    df_pred = inverse_transform(df_out, target_stdev,  target_mean)
+   
+    
+#    for c in df_out.columns:
+#         df_out[c] = df_out[c] * target_stdev + target_mean
     
     display(df_out)
 
