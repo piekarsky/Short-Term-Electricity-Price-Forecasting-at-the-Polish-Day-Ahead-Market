@@ -124,6 +124,10 @@ def inverse_transform(df, target_stdev,  target_mean):
          df[col] = df[col] * target_stdev + target_mean
     return df
     
-
+def calculate_metrics(df, value, prediction):
+    return {'mae' : mean_absolute_error(df[value], df[prediction]),
+            'rmse' : mean_squared_error(df[value], df[prediction]) ** 0.5,
+            'r2' : r2_score(df[value], df[prediction]),
+             'mape' : mean_absolute_percentage_error(df[value], df[prediction])*100}
 
 
