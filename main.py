@@ -110,15 +110,9 @@ def main(args):
     df_pred = inverse_transform(df_out, target_stdev,  target_mean)
    
     
-#    for c in df_out.columns:
-#         df_out[c] = df_out[c] * target_stdev + target_mean
-    
-    display(df_out)
+    result_metrics = calculate_metrics(df_pred, args.target, ystar_col)
 
-#     df_out = df_out.reset_index()
-    
-
-    
+    display(result_metrics)
     
     
 
