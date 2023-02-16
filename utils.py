@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import torch
 from torch.utils.data import TensorDataset, DataLoader, Dataset
-
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, mean_absolute_percentage_error
 
 
 def make_dirs(path):
@@ -30,7 +30,7 @@ def standardization(df, target):
 
 
 def train_validate_test_split(df, validate_percent=.2):    
-    train_percent = 1 - validate_percent
+    train_percent = 1 - validate_percent*2
     #perm = np.random.permutation(df.index)
     m = len(df.index)
     train_end = int(train_percent * m)
@@ -62,9 +62,7 @@ class SequenceDataset(Dataset):
             x = self.X[i_start:(i + 1), :]
            # x = torch.cat((x[:,:i], x[:, i+1:]), axis = 1)
            # x = torch.cat((x[:,:i], x[:, i+1:]))
-           # x = x[torch.arange(x.size(0))!=self.sequence_length-1] 
-            
-            
+           # x = x[torch.arange(x.size(0))!=self.sequence_length-1]             
         else:
             padding = self.X[0].repeat(self.sequence_length - i - 1, 1)
             x = self.X[0:(i + 1), :]
