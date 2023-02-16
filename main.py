@@ -6,7 +6,7 @@ import pandas as pd
 import torch
 import torch.nn as nn
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, mean_absolute_percentage_error
-from utils import make_dirs, load_data, standardization, train_validate_test_split, SequenceDataset, train_model, val_model, predict, inverse_transform
+from utils import make_dirs, load_data, standardization, train_validate_test_split, SequenceDataset, train_model, val_model, predict, inverse_transform, calculate_metrics
 from models import RNN, LSTM, GRU
 from sklearn.preprocessing import MinMaxScaler
 from torch.utils.data import DataLoader
@@ -15,31 +15,33 @@ from torch.utils.data import DataLoader
 
 def main(args):
 
-    # Fix Seed #
+    # Fix seed
     random.seed(args.seed)
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed(args.seed)
 
-    # Prepare Data 
+    # Prepare data 
     df = load_data(args.which_data)[args.feature]
     df = df.set_index(['date'])  
     features = list(df.columns.difference([args.target]))
     target_mean = df[args.target].mean()
     target_stdev = df[args.target].std()
     
-    # Standardize Data 
+    # Standardize data 
     df_ = standardization(df, args.target)
     df = df_.reset_index(drop=False)
     
     
-    #Split Data
+    #Split data
     df_train, df_val, df_test = train_validate_test_split(df, args.test_split) 
     df_train = df_train.set_index(['date'])
     df_val = df_val.set_index(['date'])
     df_test = df_test.set_index(['date'])
     
     display(df_train)
+    display(df_val)
+    display(df_test)
     
     train_dataset = SequenceDataset(
         df_train,
@@ -72,10 +74,10 @@ def main(args):
     
     if args.model == 'rnn':
         model = RNN(num_inputs, args.num_hidden_size, args.num_layers, args.output_size, args.dropout)
-  #  elif args.model == 'lstm':
-    #    model = LSTM(num_inputs=len(features), args.hidden_size, args.num_layers, args.output_size, args.dropout)
-   # elif args.model == 'gru':
-     #   model = GRU(num_inputs=len(features), args.hidden_size, args.num_layers, args.output_size, args.dropout)
+    elif args.model == 'lstm':
+        model = LSTM(num_inputs, args.hidden_size, args.num_layers, args.output_size, args.dropout)
+    elif args.model == 'gru':
+        model = GRU(num_inputs, args.hidden_size, args.num_layers, args.output_size, args.dropout)
     else:
         raise NotImplementedError
     
@@ -85,7 +87,7 @@ def main(args):
     
     train_plot_losss = []
     val_plot_losss = []
-
+    
     for ix_epoch in range(1, args.num_epochs+1):
         print(f"Epoch {ix_epoch}\n---------")
         train_model(train_loader, model, loss_function, optimizer=optimizer)
@@ -105,13 +107,8 @@ def main(args):
 #    for col in columns:
 #        df[col] = scaler.inverse_transform(df[col])
 #    return df
-
-
     df_pred = inverse_transform(df_out, target_stdev,  target_mean)
-   
-    
     result_metrics = calculate_metrics(df_pred, args.target, ystar_col)
-
     display(result_metrics)
     
     
@@ -120,45 +117,46 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
     parser.add_argument('--which_data', type=str, default='./data/data.xlsx', help='which data to use')
-    parser.add_argument('--seed', type=int, default=7777, help='seed for reproducibility')
-    parser.add_argument('--target', type=str, default='value', help='explained variable')
+    parser.add_argument('--seed', type=int, default=7777, help='seed for reproducibility')   
     parser.add_argument('--output_size', type=int, default=1, help='output_dim')   
     parser.add_argument('--seq_length', type=int, default=5, help='window size')
     parser.add_argument('--batch_size', type=int, default=64, help='mini-batch size')
+    parser.add_argument('--target', type=str, default='fixing_I_course (PLN/MWh)', help='explained variable')
     parser.add_argument('--feature', type=str, 
-                         default=['value', 'date', 
-                                  'electricity demand',
-                                  'generation of energy from wind sources', 
-                                  'is_weekend',
-                                  'code of the day', 
-                                  'value lag24', 
-                                  'value lag48', 
-                                  'value lag72',
-                                  'value lag96',
-                                  'value lag120', 
-                                  'value lag144', 
-                                  'value lag168',
-                                  'value lag336', 
-                                  'electricity demand lag24', 
-                                  'electricity demand lag48',
-                                  'electricity demand lag72', 
-                                  'electricity demand lag96',
-                                  'electricity demand lag120', 
-                                  'electricity demand lag144',
-                                  'electricity demand lag168', 
-                                  'electricity demand lag336',
-                                  'generation of energy from wind sources lag24',
-                                  'generation of energy from wind sources lag48',
-                                  'generation of energy from wind sources lag72',
-                                  'generation of energy from wind sources lag96',
-                                  'generation of energy from wind sources lag120',
-                                  'generation of energy from wind sources lag144',
-                                  'generation of energy from wind sources lag168',
-                                  'generation of energy from wind sources lag336'], help='features')
-    parser.add_argument('--test_split', type=float, default=0.2, help='test_split')
+                         default=['date', 
+                                  'fixing_I_course (PLN/MWh)',
+                                  'domestic_electricity_demand (MW)',
+                                  'generation_of_energy_from_wind_sources (MW)', 
+                                  'is_holiday',
+                                  'code_of_the_day', 
+                                  'fixing_I_course (PLN/MWh) lag24', 
+                                  'fixing_I_course (PLN/MWh) lag48', 
+                                  'fixing_I_course (PLN/MWh) lag72',
+                                  'fixing_I_course (PLN/MWh) lag96',
+                                  'fixing_I_course (PLN/MWh) lag120', 
+                                  'fixing_I_course (PLN/MWh) lag144', 
+                                  'fixing_I_course (PLN/MWh) lag168',
+                                  'fixing_I_course (PLN/MWh) lag336', 
+                                  'domestic_electricity_demand (MW) lag24', 
+                                  'domestic_electricity_demand (MW) lag48',
+                                  'domestic_electricity_demand (MW) lag72', 
+                                  'domestic_electricity_demand (MW) lag96',
+                                  'domestic_electricity_demand (MW) lag120', 
+                                  'domestic_electricity_demand (MW) lag144',
+                                  'domestic_electricity_demand (MW) lag168', 
+                                  'domestic_electricity_demand (MW) lag336',
+                                  'generation_of_energy_from_wind_sources (MW) lag24',
+                                  'generation_of_energy_from_wind_sources (MW) lag48',
+                                  'generation_of_energy_from_wind_sources (MW) lag72',
+                                  'generation_of_energy_from_wind_sources (MW) lag96',
+                                  'generation_of_energy_from_wind_sources (MW) lag120',
+                                  'generation_of_energy_from_wind_sources (MW) lag144',
+                                  'generation_of_energy_from_wind_sources (MW) lag168',
+                                  'generation_of_energy_from_wind_sources (MW) lag336'], help='ex_features')
+    parser.add_argument('--test_split', type=float, default=0.0824, help='test_split')
     parser.add_argument('--lr', type=int, default=0.0001, help='learning rate')
     parser.add_argument('--num_hidden_size', type=int, default=256, help='hidden units')
-    parser.add_argument('--num_epochs', type=int, default=3, help='num epochs')
+    parser.add_argument('--num_epochs', type=int, default=11, help='num epochs')
     parser.add_argument('--num_layers', type=int, default=2, help='num layer dim')
     parser.add_argument('--dropout', type=int, default=0.6, help='dropout rate')
     parser.add_argument('--model', type=str, default='rnn', choices=['rnn', 'lstm', 'gru'])
