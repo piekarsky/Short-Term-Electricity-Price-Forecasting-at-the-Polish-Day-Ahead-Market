@@ -5,8 +5,9 @@
 
 + [Overview](#overview)
 + [Modeled time series of electricity prices at the Polish Power Exchange Day-Ahead-Market ](#modeled_time_series_of_electricity_prices)
-+ [Results](#preparing_data_for_analysis)
-+ [Run the codes](#results)
++ [Features](#features)
++ [Results](#results)
++ [Run the Codes](#run_the_codes)
 + [Development Environment](#development_environment)
 
 ## Overview <a name = "overview"></a>
@@ -23,6 +24,23 @@ The analysis is based on a series of over 26.200 hourly observations of fixing I
 The analysis of the time series of electricity prices confirmed the one described in the literature auto-regressive nature of this process. Shown in the figure below
 graph of the autocorrelation function of the modeled time series, on which you can note that the price of electricity at a given hour is significantly affected by the value of the electricity price from the past corresponding to a delay of multiples of **24 hours**.
 <img width="850" height="350" src = img/fig_6.png/>
+
+A specific feature of electricity prices resulting from the daily, weekly
+and annual rhythm is the variability of its level over time. The annual cycle follows
+from differences in energy demand in different seasons of the year, which makes
+that energy demand is higher in winter and lower in winter
+summer months. Electricity prices within the weekly cycle varies with
+energy demand on weekdays and weekends. In Figure below showing the weekly course of electricity prices under the 1st fixing, there are visible differences in the level of energy prices on Saturdays and Sundays
+compared to other days of the week, where the course of electricity prices is similar.
+<img width="740" height="420" src = img/fig_7.png/>
+
+
+The daily volatility of electricity prices is influenced by the increased demand for energy,
+which occurs between 6 am and 9 pm and translates into a higher price of energy in
+this time (figure below). Short-term fluctuations in electricity prices can
+result from weather factors that determine the scale of energy production in renewable energy sources.
+<img width="740" height="420" src = img/fig_8.png/>
+
 
 ## Results <a name = "results"></a>
 According to the table below, **RNN** outperformed the other models.
