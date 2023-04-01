@@ -30,13 +30,13 @@ and annual rhythm is the variability of its level over time. The annual cycle fo
 from differences in energy demand in different seasons of the year, which makes
 that energy demand is higher in winter and lower in winter
 summer months. Electricity prices within the weekly cycle varies with
-energy demand on weekdays and weekends. In Figure below showing the weekly course of electricity prices under the 1st fixing, there are visible differences in the level of energy prices on Saturdays and Sundays
+energy demand on weekdays and weekends. In the figure below showing the weekly course of electricity prices under the 1st fixing, there are visible differences in the level of energy prices on Saturdays and Sundays
 compared to other days of the week, where the course of electricity prices is similar.
 <img width="740" height="420" src = img/fig_7.png/>
 
 
 The daily volatility of electricity prices is influenced by the increased demand for energy,
-which occurs between 6 am and 9 pm and translates into a higher price of energy in
+which occurs between 6 am and 9 pm and translates into a higher price of electricity in
 this time (figure below). Short-term fluctuations in electricity prices can
 result from weather factors that determine the scale of energy production in renewable energy sources.
 <img width="740" height="420" src = img/fig_8.png/>
