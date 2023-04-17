@@ -12,7 +12,7 @@
 
 ## Overview <a name = "overview"></a>
 
-This repository contains the experimental source code for short term electricity price forecasting at the spot market (Day-Ahead Market)  including **RNN**, **LSTM**, **GRU**, **MLP** and **Prophet** models. Forecasts next 24 hours of hourly electricity prices. </br> Models using both the delayed exogenous variable and the endogenous variables from the forecast period and their delayed values for forecasting.
+This repository contains the experimental source code for short term electricity price forecasting at the spot market (Day-Ahead Market)  including **RNN**, **LSTM**, **GRU**, **MLP** and **Prophet** models.</br> Forecasts next 24 hours of hourly electricity prices.  Models using both the delayed exogenous variable and the endogenous variables from the forecast period and their delayed values for forecasting.
 
 
 ## Modeled time series of electricity prices at the Day-Ahead-Market <a name = "modeled_time_series_of_electricity_prices"></a>
