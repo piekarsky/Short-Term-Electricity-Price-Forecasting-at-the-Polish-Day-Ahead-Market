@@ -31,8 +31,7 @@ def main(args):
     # Standardize data 
     df_ = standardization(df, args.target)
     df = df_.reset_index(drop=False)
-    
-    
+       
     #Split data
     df_train, df_val, df_test = train_validate_test_split(df, args.test_split) 
     df_train = df_train.set_index(['date'])
@@ -102,11 +101,6 @@ def main(args):
     df_test[ystar_col] = predict(test_loader, model).numpy()
     df_out = pd.concat((df_train, df_val, df_test))[[args.target, ystar_col]]
     
-    
-#    def inverse_transform(scaler, df, columns):
-#    for col in columns:
-#        df[col] = scaler.inverse_transform(df[col])
-#    return df
     df_pred = inverse_transform(df_out, target_stdev,  target_mean)
     result_metrics = calculate_metrics(df_pred, args.target, ystar_col)
     display(result_metrics)
@@ -121,22 +115,22 @@ if __name__ == "__main__":
     parser.add_argument('--output_size', type=int, default=1, help='output_dim')   
     parser.add_argument('--seq_length', type=int, default=5, help='window size')
     parser.add_argument('--batch_size', type=int, default=64, help='mini-batch size')
-    parser.add_argument('--target', type=str, default='fixing_I_course (PLN/MWh)', help='explained variable')
+    parser.add_argument('--target', type=str, default='electricity_price (PLN/MWh)', help='dependent feature')
     parser.add_argument('--feature', type=str, 
                          default=['date', 
-                                  'fixing_I_course (PLN/MWh)',
+                                  'electricity_price (PLN/MWh)',
                                   'domestic_electricity_demand (MW)',
                                   'generation_of_energy_from_wind_sources (MW)', 
                                   'is_holiday',
                                   'code_of_the_day', 
-                                  'fixing_I_course (PLN/MWh) lag24', 
-                                  'fixing_I_course (PLN/MWh) lag48', 
-                                  'fixing_I_course (PLN/MWh) lag72',
-                                  'fixing_I_course (PLN/MWh) lag96',
-                                  'fixing_I_course (PLN/MWh) lag120', 
-                                  'fixing_I_course (PLN/MWh) lag144', 
-                                  'fixing_I_course (PLN/MWh) lag168',
-                                  'fixing_I_course (PLN/MWh) lag336', 
+                                  'electricity_price (PLN/MWh) lag24', 
+                                  'electricity_price (PLN/MWh) lag48', 
+                                  'electricity_price (PLN/MWh) lag72',
+                                  'electricity_price (PLN/MWh) lag96',
+                                  'electricity_price (PLN/MWh) lag120', 
+                                  'electricity_price (PLN/MWh) lag144', 
+                                  'electricity_price (PLN/MWh) lag168',
+                                  'electricity_price (PLN/MWh) lag336', 
                                   'domestic_electricity_demand (MW) lag24', 
                                   'domestic_electricity_demand (MW) lag48',
                                   'domestic_electricity_demand (MW) lag72', 
@@ -152,7 +146,7 @@ if __name__ == "__main__":
                                   'generation_of_energy_from_wind_sources (MW) lag120',
                                   'generation_of_energy_from_wind_sources (MW) lag144',
                                   'generation_of_energy_from_wind_sources (MW) lag168',
-                                  'generation_of_energy_from_wind_sources (MW) lag336'], help='ex_features')
+                                  'generation_of_energy_from_wind_sources (MW) lag336'], help='independent features')
     parser.add_argument('--test_split', type=float, default=0.0824, help='test_split')
     parser.add_argument('--lr', type=int, default=0.0001, help='learning rate')
     parser.add_argument('--num_hidden_size', type=int, default=256, help='hidden units')
