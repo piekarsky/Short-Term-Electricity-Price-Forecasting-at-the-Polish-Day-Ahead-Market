@@ -38,9 +38,9 @@ def main(args):
     df_val = df_val.set_index(['date'])
     df_test = df_test.set_index(['date'])
     
-    display(df_train)
-    display(df_val)
-    display(df_test)
+    #display(df_train)
+    #display(df_val)
+    #display(df_test)
     
     train_dataset = SequenceDataset(
         df_train,
@@ -119,8 +119,8 @@ if __name__ == "__main__":
     parser.add_argument('--feature', type=str, 
                          default=['date', 
                                   'electricity_price (PLN/MWh)',
-                                  'domestic_electricity_demand (MW)',
-                                  'generation_of_energy_from_wind_sources (MW)', 
+                                  'energy_demand (MW)',
+                                  'energy_from_wind_sources (MW)', 
                                   'is_holiday',
                                   'code_of_the_day', 
                                   'electricity_price (PLN/MWh) lag24', 
@@ -131,22 +131,22 @@ if __name__ == "__main__":
                                   'electricity_price (PLN/MWh) lag144', 
                                   'electricity_price (PLN/MWh) lag168',
                                   'electricity_price (PLN/MWh) lag336', 
-                                  'domestic_electricity_demand (MW) lag24', 
-                                  'domestic_electricity_demand (MW) lag48',
-                                  'domestic_electricity_demand (MW) lag72', 
-                                  'domestic_electricity_demand (MW) lag96',
-                                  'domestic_electricity_demand (MW) lag120', 
-                                  'domestic_electricity_demand (MW) lag144',
-                                  'domestic_electricity_demand (MW) lag168', 
-                                  'domestic_electricity_demand (MW) lag336',
-                                  'generation_of_energy_from_wind_sources (MW) lag24',
-                                  'generation_of_energy_from_wind_sources (MW) lag48',
-                                  'generation_of_energy_from_wind_sources (MW) lag72',
-                                  'generation_of_energy_from_wind_sources (MW) lag96',
-                                  'generation_of_energy_from_wind_sources (MW) lag120',
-                                  'generation_of_energy_from_wind_sources (MW) lag144',
-                                  'generation_of_energy_from_wind_sources (MW) lag168',
-                                  'generation_of_energy_from_wind_sources (MW) lag336'], help='independent features')
+                                  'energy_demand (MW) lag24', 
+                                  'energy_demand (MW) lag48',
+                                  'energy_demand (MW) lag72', 
+                                  'energy_demand (MW) lag96',
+                                  'energy_demand (MW) lag120', 
+                                  'energy_demand (MW) lag144',
+                                  'energy_demand (MW) lag168', 
+                                  'energy_demand (MW) lag336',
+                                  'energy_from_wind_sources (MW) lag24',
+                                  'energy_from_wind_sources (MW) lag48',
+                                  'energy_from_wind_sources (MW) lag72',
+                                  'energy_from_wind_sources (MW) lag96',
+                                  'energy_from_wind_sources (MW) lag120',
+                                  'energy_from_wind_sources (MW) lag144',
+                                  'energy_from_wind_sources (MW) lag168',
+                                  'energy_from_wind_sources (MW) lag336'], help='independent features')
     parser.add_argument('--test_split', type=float, default=0.0824, help='test_split')
     parser.add_argument('--lr', type=int, default=0.0001, help='learning rate')
     parser.add_argument('--num_hidden_size', type=int, default=256, help='hidden units')
