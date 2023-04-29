@@ -1,23 +1,22 @@
-# Short-Term-Electricity-Price-Forecasting-at-the-Day-Ahead-Market
+# Short Term Electricity Price Forecasting at the Polish Day-Ahead-Market
 
 
 ## Table of Contents
 
 + [Overview](#overview)
 + [About the dataset](#dataset)
-+ [The concept of the forecasting model](#concept)
++ [Modeling electricity prices](#modeling_electricity_prices)
 + [Results](#results)
 + [Run the Codes](#run_the_codes)
 + [Development Environment](#development_environment)
 
 ## Overview <a name = "overview"></a>
 
-This repository contains the experimental source code for short term (24 hour advance) electricity price forecasting at the Polish spot market including **RNN**, **LSTM**, **GRU**, **MLP** and **Prophet** models.</br> Models using both the delayed exogenous variable and the endogenous variables from the forecast period and their delayed values for forecasting.
-
+This repository contains the experimental source code for short term (24 hour advance) electricity price forecasting at the Polish SPOT (Day-Ahead-Market) market including **RNN**, **LSTM**, **GRU**, **MLP** and **Prophet** models.</br> Models using both the delayed exogenous variable and the endogenous variables from the forecast period and their delayed values for forecasting.
 
 ## About the dataset <a name = "dataset"></a>
 
-The analysis is based on a series of over 26.200 hourly observations of electricity prices (PLN/MWh) from January 2018 to December 2020 at the Polish Day-Ahead-Market. Course of this modeled time series of electricity prices is shown in the figure below.
+Data includes over 26.200 hourly observations of electricity prices (PLN/MWh) from January 2018 to December 2020 at the Polish Day-Ahead-Market. Course of this modeled time series of electricity prices is shown in the figure below.
 <img width="740" height="420" src = figures/fig_1.png/>
 
 
@@ -44,22 +43,23 @@ result from weather factors that determine the scale of energy production in win
 <img width="740" height="420" src = figures/fig_4.png/>
 
 
-## The concept of the forecasting model <a name = "concept"></a>
-Domestic power demand and generation of energy from wind sources were selected as the basic input variables. 
-Taking into account the autoregressive nature of the process, information was also used
-about the value of the electricity price in the past. Minimum delay values
-can be known and used in the model represent the electricity price 24 hours ago. 
-It was decided to use the forecasting model
+## Modeling electricity prices <a name = "modeling_electricity_prices"></a>
+
+Features used to generate forecasts include autocorrelated lagged electricity prices, energy demand, generation energy from wind sources and time of day. 
+Data with energy demand and generation energy from wind sources are published once a day for the coming 24 hour period.
+ Minimum delay values can be known and used in the model represent the electricity price 24 hours ago. It was decided to use the forecasting model
 delayed electricity price ​​up to a week ago as well as delayed values
 prices from two weeks ago, together with adequate values ​​of other factors (energy demand and generation of energy from wind sources)
-describing them. Due to daily and weekly seasonality in the form of explanatory variables
+describing them.
+</br> </br>
+ Due to daily and weekly seasonality in the form of explanatory variables
 the model also included the time of day and information about the occurrence of a holiday. For time of day and day
 binary dummy coding was used. In the case of leeks
 day, the value of input 1 was assumed for the period between 6 a.m. and 9 p.m., where it is visible
 are higher electricity prices, and the value is 0 for the remaining hours of the day.
 Due to the fact that the time series of electricity prices in the analyzed period did not show
-annual seasonality, the variables defining the annual cycle were omitted. </br>
-The data from January 2018 to December 2020 have been splitted as follows: </br>
+annual seasonality, the variables defining the annual cycle were omitted. </br> </br>
+The data from January 2018 to December 2020 have been splitted as follows: </br> </br>
 – training set: data from January 2018 to June 2020 </br>
 – validation set: data from July to September 2020 </br>
 – test set: data from October to December 2020 </br>
