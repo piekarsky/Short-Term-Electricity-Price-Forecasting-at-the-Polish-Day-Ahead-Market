@@ -45,7 +45,7 @@ result from weather factors that determine the scale of energy production in win
 
 ## Modeling electricity prices <a name = "modeling_electricity_prices"></a>
 
-Features used to generate forecasts include autocorrelated lagged electricity prices, energy demand, generation energy from wind sources and time of day. 
+Features used to generate forecasts include autocorrelated lagged electricity prices, energy demand, generation energy from wind sources and time of the day. 
 Data with energy demand and generation energy from wind sources are published once a day for the coming 24 hour period.
  Minimum delay values can be known and used in the model represent the electricity price 24 hours ago. It was decided to use the forecasting model
 delayed electricity price ​​up to a week ago as well as delayed values
@@ -53,13 +53,13 @@ prices from two weeks ago, together with adequate values ​​of other factors 
 describing them.
 </br> </br>
  Due to daily and weekly seasonality in the form of explanatory variables
-the model also included the time of day and information about the occurrence of a holiday. For time of day and day
+the model also included the time of the day and the occurrence of a holiday. For time of the day and holiday
 binary dummy coding was used. In the case of leeks
 day, the value of input 1 was assumed for the period between 6 a.m. and 9 p.m., where it is visible
 are higher electricity prices, and the value is 0 for the remaining hours of the day.
 Due to the fact that the time series of electricity prices in the analyzed period did not show
 annual seasonality, the variables defining the annual cycle were omitted. </br> </br>
-The data from January 2018 to December 2020 have been splitted as follows: </br> </br>
+The data from January 2018 to December 2020 have been splitted as follows: </br> 
 – training set: data from January 2018 to June 2020 </br>
 – validation set: data from July to September 2020 </br>
 – test set: data from October to December 2020 </br>
