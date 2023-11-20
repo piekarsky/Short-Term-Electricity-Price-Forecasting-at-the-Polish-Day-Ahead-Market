@@ -49,8 +49,7 @@ Features used to generate forecasts include autocorrelated lagged electricity pr
 Data with energy demand and generation energy from wind sources are published once a day for the coming 24 hour period. The data for these factors are published sufficiently in advance to be used in the model. </br> </br> Minimum delay values can be known and used in the model represent the electricity price 24 hours ago. The model uses delayed electricity price lags ranging between 7 days (being multiples of 24 hours)  and 14 days, as well respective values ​​of energy demand and generation of energy from wind sources.
 </br> </br>
 For time of the day and holiday
-binary dummy coding was used. In the case of leeks
-day, the value of input 1 was set for the period between 6 a.m. and 9 p.m., where it is visible
+binary dummy coding was used. For time of the day, the value of input 1 was set for the period between 6 a.m. and 9 p.m., where it is visible
 are higher electricity prices, and the value 0 is set for the remaining hours of the day.
 Due to the fact that the time series of electricity prices in the analyzed period did not show
 annual seasonality, the variables defining the annual cycle were omitted. </br> </br>
