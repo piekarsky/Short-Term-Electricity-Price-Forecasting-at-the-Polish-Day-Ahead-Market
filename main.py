@@ -74,9 +74,9 @@ def main(args):
     if args.model == 'rnn':
         model = RNN(num_inputs, args.num_hidden_size, args.num_layers, args.output_size, args.dropout)
     elif args.model == 'lstm':
-        model = LSTM(num_inputs, args.hidden_size, args.num_layers, args.output_size, args.dropout)
+        model = LSTM(num_inputs, args.num_hidden_size, args.num_layers, args.output_size, args.dropout)
     elif args.model == 'gru':
-        model = GRU(num_inputs, args.hidden_size, args.num_layers, args.output_size, args.dropout)
+        model = GRU(num_inputs, args.num_hidden_size, args.num_layers, args.output_size, args.dropout)
     else:
         raise NotImplementedError
     
